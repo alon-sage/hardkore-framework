@@ -89,7 +89,7 @@ fun gitVersion(): String {
                 } else {
                     add(Identifier.fromString("SNAPSHOT"))
                     add(Identifier.fromString(details.gitHashFull.substring(0, 8)))
-                    if (details.branchName != "dev") {
+                    if (details.branchName != null && details.branchName != "dev") {
                         val sanitizedBranchName = details.branchName.replace("\\W+".toRegex(), "-")
                         add(Identifier.fromString(sanitizedBranchName))
                     }

@@ -82,14 +82,14 @@ fun gitVersion(): String {
             buildList<Identifier> {
                 addAll(tagVersion.preReleaseIdentifiers)
 
-                if (details.branchName == "main") {
+                if (details.branchName == null || details.branchName == "main") {
                     if (details.commitDistance > 0) {
                         add(Identifier.fromString(details.gitHashFull.substring(0, 8)))
                     }
                 } else {
                     add(Identifier.fromString("SNAPSHOT"))
                     add(Identifier.fromString(details.gitHashFull.substring(0, 8)))
-                    if (details.branchName != null && details.branchName != "dev") {
+                    if (details.branchName != "dev") {
                         val sanitizedBranchName = details.branchName.replace("\\W+".toRegex(), "-")
                         add(Identifier.fromString(sanitizedBranchName))
                     }

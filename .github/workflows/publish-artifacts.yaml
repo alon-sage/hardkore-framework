@@ -25,9 +25,12 @@ jobs:
         uses: gradle/actions/setup-gradle@d9c87d481d55275bb5441eef3fe0e46805f9ef70 # v3.5.0
 
       - name: Build packages
-        run: ./gradlew build --info --stacktrace
+        run: ./gradlew printVersion --stacktrace
+
+      - name: Build packages
+        run: ./gradlew build --stacktrace
 
       - name: Publish packages
-        run: ./gradlew publish --info --stacktrace
+        run: ./gradlew publish --stacktrace
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

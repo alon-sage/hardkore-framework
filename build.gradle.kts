@@ -1,3 +1,7 @@
+import com.github.jk1.license.filter.LicenseBundleNormalizer
+import com.github.jk1.license.filter.SpdxLicenseBundleNormalizer
+import com.github.jk1.license.render.InventoryHtmlReportRenderer
+import com.github.jk1.license.render.InventoryMarkdownReportRenderer
 import org.jetbrains.kotlin.com.github.gundy.semver4j.model.Version
 import org.jetbrains.kotlin.com.github.gundy.semver4j.model.Version.Identifier
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
@@ -21,6 +25,7 @@ plugins {
     id("com.apollographql.apollo3") version "4.0.0-beta.7" apply false
 
     id("com.palantir.git-version") version "3.1.0"
+    id("com.github.jk1.dependency-license-report") version "2.8"
 }
 
 group = "com.github.alon-sage.hardkore"
@@ -68,6 +73,13 @@ subprojects {
             junitXml.required.set(true)
         }
     }
+}
+
+licenseReport {
+    renderers = arrayOf(InventoryMarkdownReportRenderer(), InventoryHtmlReportRenderer())
+    filters = arrayOf(LicenseBundleNormalizer(), SpdxLicenseBundleNormalizer())
+    allowedLicensesFile = file("allowed-licenses.json")
+    excludeBoms = true
 }
 
 fun gitVersion(): String {

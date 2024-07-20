@@ -27,6 +27,9 @@ jobs:
       - name: Print version
         run: ./gradlew printVersion --stacktrace
 
+      - name: Check licenses
+        run: ./gradlew checkLicense --stacktrace
+
       - name: Build packages
         run: ./gradlew build --stacktrace
 

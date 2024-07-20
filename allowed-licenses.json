@@ -1,0 +1,31 @@
+{
+  "allowedLicenses" : [
+    {
+      "moduleLicense" : "Apache-2.0"
+    },
+    {
+      "moduleLicense" : "MIT"
+    },
+    {
+      "moduleLicense" : "BSD-2-Clause"
+    },
+    {
+      "moduleLicense" : "BSD-3-Clause"
+    },
+    {
+      "moduleLicense" : "CC0-1.0"
+    },
+    {
+      "moduleLicense": "EPL-1.0",
+      "moduleName": "ch.qos.logback:logback-classic"
+    },
+    {
+      "moduleLicense": "EPL-1.0",
+      "moduleName": "ch.qos.logback:logback-core"
+    },
+    {
+      "moduleLicense": "EPL-1.0",
+      "moduleName": "junit:junit"
+    }
+  ]
+}

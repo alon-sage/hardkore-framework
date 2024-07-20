@@ -12,4 +12,6 @@ dependencies {
     api("io.ktor:ktor-server")
 
     implementation("io.ktor:ktor-server-netty")
+
+    testImplementation("io.ktor:ktor-client-cio")
 }

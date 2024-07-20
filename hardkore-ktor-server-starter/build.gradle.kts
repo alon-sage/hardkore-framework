@@ -6,4 +6,6 @@ plugins {
 
 dependencies {
     api(project(":hardkore-ktor-server"))
+
+    testImplementation("io.ktor:ktor-client-cio")
 }

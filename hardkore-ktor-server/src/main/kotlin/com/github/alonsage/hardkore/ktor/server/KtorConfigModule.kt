@@ -1,3 +1,8 @@
 package com.github.alonsage.hardkore.ktor.server
 
-fun interface KtorConfigModule : KtorModule
+import io.ktor.server.application.Application
+
+fun interface KtorConfigModule : KtorModule {
+    override fun invoke(appplication: Application) =
+        appplication.configure()
+}

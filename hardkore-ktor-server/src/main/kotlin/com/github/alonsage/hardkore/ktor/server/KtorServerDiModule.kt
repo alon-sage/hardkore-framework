@@ -1,5 +1,6 @@
 package com.github.alonsage.hardkore.ktor.server
 
+import com.github.alonsage.hardkore.condition.Conditions
 import com.github.alonsage.hardkore.config.bindConfigBean
 import com.github.alonsage.hardkore.di.Binder
 import com.github.alonsage.hardkore.di.DiModule
@@ -11,6 +12,7 @@ import com.github.alonsage.hardkore.runtime.RuntimeService
 import com.github.alonsage.hardkore.runtime.bindRuntimeService
 import com.google.auto.service.AutoService
 import com.typesafe.config.Config
+import io.ktor.server.application.ServerReady
 import io.ktor.server.application.call
 import io.ktor.server.config.HoconApplicationConfig
 import io.ktor.server.engine.ApplicationEngineEnvironment
@@ -30,14 +32,15 @@ class KtorServerDiModule : DiModule {
     override fun Binder.install() {
         bindConfigBean<Properties>("ktor")
         bindSet<KtorModule> {}
-        bindFactory { applicationEngineEnvironment(bean(), bean(), bean()) }
+        bindFactory { applicationEngineEnvironment(bean(), bean(), bean(), bean()) }
         bindRuntimeService { serverRuntimeService(bean()) }
     }
 
     private fun applicationEngineEnvironment(
         properties: Properties,
         appConfig: Config,
-        appModules: Set<KtorModule>
+        appModules: Set<KtorModule>,
+        conditions: Conditions
     ): ApplicationEngineEnvironment =
         applicationEngineEnvironment {
             log = LoggerFactory.getLogger(KtorServerDiModule::class.java)
@@ -48,6 +51,12 @@ class KtorServerDiModule : DiModule {
                 connector {
                     host = it.host
                     port = it.port
+                }
+            }
+
+            module {
+                environment.monitor.subscribe(ServerReady) {
+                    conditions.set(KtorServerReady)
                 }
             }
 

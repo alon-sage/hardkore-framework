@@ -13,17 +13,17 @@ HardKore built on the next principles:
 
 Packages:
 
-* [hardcore](hardkore/README.md) - implements dependency injection, configuration, lifecycles,
+* [hardkore](hardkore/README.md) - implements dependency injection, configuration, lifecycles,
   observability, and some useful utilities
 
 
-* [hardcore-ktor-server](hardcore-ktor-server/README.md) - a Ktor server integration
-* [hardcore-ktor-server-starter](hardcore-ktor-server-starter/README.md) - a small wrapper that automatically registers
+* [hardkore-ktor-server](hardkore-ktor-server/README.md) - a Ktor server integration
+* [hardkore-ktor-server-starter](hardkore-ktor-server-starter/README.md) - a small wrapper that automatically registers
   Ktor server CLI command
-* [hardcore-ktor-server-testing](hardcore-ktor-server-testing/README.md) - implements utility to test server
+* [hardkore-ktor-server-testing](hardkore-ktor-server-testing/README.md) - implements utility to test server
 
 
-* [hardcore-graphql-server](hardcore-graphql-server/README.md) - a GraphQL server implementation on top of Ktor
-* [hardcore-graphql-server-starter](hardcore-graphql-server-starter/README.md) - a small wrapper that automatically
+* [hardkore-graphql-server](hardkore-graphql-server/README.md) - a GraphQL server implementation on top of Ktor
+* [hardkore-graphql-server-starter](hardkore-graphql-server-starter/README.md) - a small wrapper that automatically
   registers GraphQL server CLI command
-* [hardcore-graphql-server-testing](hardcore-graphql-server-testing/README.md) - implements utility to test server
+* [hardkore-graphql-server-testing](hardkore-graphql-server-testing/README.md) - implements utility to test server

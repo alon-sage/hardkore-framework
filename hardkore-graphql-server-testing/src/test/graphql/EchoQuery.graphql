@@ -1,0 +1,3 @@
+query EchoQuery($value: String) {
+    echo(value: $value)
+}

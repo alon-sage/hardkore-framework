@@ -117,6 +117,10 @@ class GraphQLKtorModule(
                 close(CloseReason(status.code.toShort(), status.reason))
             }
 
+            suspend fun sendMessage(message: GraphQLSubscriptionMessageDto) {
+                sendSerialized<GraphQLSubscriptionMessageDto>(message)
+            }
+
             launch {
                 delay(properties.subscriptionTimeoutMillis)
                 if (graphQLContext.get() == null) {
@@ -131,14 +135,14 @@ class GraphQLKtorModule(
                             val newContext = GraphQLContext.newContext()
                                 .build()
                             if (graphQLContext.compareAndSet(null, newContext)) {
-                                sendSerialized(GraphQLSubscriptionMessageDto.ConnectionAck())
+                                sendMessage(GraphQLSubscriptionMessageDto.ConnectionAck())
                             } else {
                                 closeSession(GraphQLSubscriptionStatus.TOO_MANY_REQUESTS)
                             }
                         }
 
                         is GraphQLSubscriptionMessageDto.Ping -> {
-                            sendSerialized(GraphQLSubscriptionMessageDto.Pong())
+                            sendMessage(GraphQLSubscriptionMessageDto.Pong())
                         }
 
                         is GraphQLSubscriptionMessageDto.Subscribe -> when {
@@ -161,14 +165,14 @@ class GraphQLKtorModule(
                                     executionResult.getData<Publisher<ExecutionResult>>().asFlow()
                                         .onEach { result ->
                                             if (result.errors.isNullOrEmpty()) {
-                                                sendSerialized(
+                                                sendMessage(
                                                     GraphQLSubscriptionMessageDto.Next(
                                                         message.id,
                                                         GraphQLResponseDto(result)
                                                     )
                                                 )
                                             } else {
-                                                sendSerialized(
+                                                sendMessage(
                                                     GraphQLSubscriptionMessageDto.Error(
                                                         message.id,
                                                         result.errors.map { GraphQLErrorDto(it) }
@@ -178,7 +182,7 @@ class GraphQLKtorModule(
                                         }
                                         .onCompletion {
                                             if (it == null) {
-                                                sendSerialized(GraphQLSubscriptionMessageDto.Complete(message.id))
+                                                sendMessage(GraphQLSubscriptionMessageDto.Complete(message.id))
                                             } else {
                                                 closeSession(GraphQLSubscriptionStatus.SERVER_ERROR)
                                             }

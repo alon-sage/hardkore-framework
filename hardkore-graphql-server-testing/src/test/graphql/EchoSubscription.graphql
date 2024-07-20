@@ -1,0 +1,3 @@
+subscription EchoSubscription($value: String) {
+    echo(value: $value)
+}

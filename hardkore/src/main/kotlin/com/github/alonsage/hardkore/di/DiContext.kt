@@ -47,10 +47,7 @@ private constructor(
             withDependencyCycleChecking(ref) {
                 @Suppress("UNCHECKED_CAST")
                 when (val binding = bindings[ref] as Binding<T>?) {
-                    null -> parent?.bean(ref) ?: run {
-                        if (ref.kType.isMarkedNullable) null as T
-                        else throw NoSuchElementException("Bean is not found: $ref")
-                    }
+                    null -> parent?.bean(ref) ?: throw NoSuchElementException("Bean is not found: $ref")
 
                     is InstanceBinding -> binding.instance
 

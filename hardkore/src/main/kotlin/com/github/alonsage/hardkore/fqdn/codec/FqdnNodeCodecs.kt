@@ -17,7 +17,4 @@ object FqdnNodeCodecs {
     fun <T : Any> codec(kClass: KClass<out T>): FqdnNodeCodec<T> =
         codecs[kClass] as FqdnNodeCodec<T>?
             ?: error("Missing codec for type: $kClass")
-
-    inline fun <reified T : Any> codec(): FqdnNodeCodec<T> =
-        codec(T::class)
 }

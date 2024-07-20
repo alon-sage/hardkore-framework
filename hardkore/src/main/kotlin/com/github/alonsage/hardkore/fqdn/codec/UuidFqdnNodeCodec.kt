@@ -5,7 +5,7 @@ import java.util.*
 
 @AutoService(FqdnNodeCodec::class)
 @SuppressWarnings("rawtypes")
-class UUIDFqdnNodeCodec : FqdnNodeCodec<UUID> {
+class UuidFqdnNodeCodec : FqdnNodeCodec<UUID> {
     override fun encode(value: UUID): String = value.toString()
     override fun decode(value: String): UUID = UUID.fromString(value)
 }

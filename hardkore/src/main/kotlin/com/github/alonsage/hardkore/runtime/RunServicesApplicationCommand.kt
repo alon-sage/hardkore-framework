@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlin.concurrent.thread
 
-abstract class RunServicesCommand(
+abstract class RunServicesApplicationCommand(
     help: String = "",
     epilog: String = "",
     name: String? = null,

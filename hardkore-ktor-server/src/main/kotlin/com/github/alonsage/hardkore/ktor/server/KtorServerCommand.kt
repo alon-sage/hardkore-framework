@@ -1,9 +1,9 @@
 package com.github.alonsage.hardkore.ktor.server
 
 import com.github.alonsage.hardkore.di.Binder
-import com.github.alonsage.hardkore.runtime.RunServicesCommand
+import com.github.alonsage.hardkore.runtime.RunServicesApplicationCommand
 
-class KtorServerCommand : RunServicesCommand(
+class KtorServerCommand : RunServicesApplicationCommand(
     name = "web-server",
     help = "Runs application web server"
 ) {

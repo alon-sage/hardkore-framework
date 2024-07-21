@@ -907,7 +907,7 @@ class DefaultBinderTest {
         }
     }
 
-    data object TestDiProfile : DiProfile
+    sealed interface TestDiProfile : DiProfile
 
     @AutoService(DiModule::class)
     @DiProfiles(TestDiProfile::class)

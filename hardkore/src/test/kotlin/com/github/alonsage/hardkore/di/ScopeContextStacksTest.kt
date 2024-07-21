@@ -6,7 +6,7 @@ import kotlin.test.assertSame
 
 class ScopeContextStacksTest {
     @Test
-    fun `stack works`() {
+    fun `push works`() {
         val stack = ScopeContextStacks()
         val scopeContext = BoundedScope {}
 
@@ -14,5 +14,16 @@ class ScopeContextStacksTest {
 
         assertNull(stack.top(BoundedScope))
         assertSame(scopeContext, updatedStack.top(BoundedScope))
+    }
+    @Test
+    fun `push the same type works`() {
+        val stack = ScopeContextStacks()
+        val scopeContext1 = BoundedScope {}
+        val scopeContext2 = BoundedScope {}
+
+        val updatedStack = stack.push(scopeContext1).push(scopeContext2)
+
+        assertNull(stack.top(BoundedScope))
+        assertSame(scopeContext2, updatedStack.top(BoundedScope))
     }
 }

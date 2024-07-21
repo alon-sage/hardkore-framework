@@ -62,7 +62,7 @@ subprojects {
     tasks.withType<KotlinJvmCompile> {
         kotlinOptions {
             jvmTarget = "17"
-            allWarningsAsErrors = false
+            allWarningsAsErrors = true
             freeCompilerArgs = listOf("-Xjsr305=strict")
         }
     }

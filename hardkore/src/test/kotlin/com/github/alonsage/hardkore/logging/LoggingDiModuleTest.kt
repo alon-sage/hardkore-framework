@@ -9,7 +9,9 @@ import kotlin.test.assertTrue
 class LoggingDiModuleTest {
     @Test
     fun `SLF4JBridge installed`() {
+        SLF4JBridgeHandler.uninstall()
         assertFalse(SLF4JBridgeHandler.isInstalled())
+
         DiContext { install(LoggingDiModule()) }
         assertTrue(SLF4JBridgeHandler.isInstalled())
     }

@@ -27,4 +27,8 @@ dependencies {
     implementation("ch.qos.logback:logback-classic")
     implementation("org.apache.logging.log4j:log4j-to-slf4j")
     implementation("org.slf4j:jul-to-slf4j")
+
+    kaptTest("com.google.auto.service:auto-service")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-params")
 }

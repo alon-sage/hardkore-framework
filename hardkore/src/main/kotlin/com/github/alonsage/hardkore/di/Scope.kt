@@ -54,7 +54,7 @@ private constructor(
         stacks[scope]?.last() as ScopeContext<T>?
 
     fun push(context: ScopeContext<*>): ScopeContextStacks {
-        val stack = stacks[context.scope]?.add(context) ?: persistentListOf(context)
-        return ScopeContextStacks(stacks.put(context.scope, stack))
+        val stack = stacks[context.scope] ?: persistentListOf(context)
+        return ScopeContextStacks(stacks.put(context.scope, stack.add(context)))
     }
 }

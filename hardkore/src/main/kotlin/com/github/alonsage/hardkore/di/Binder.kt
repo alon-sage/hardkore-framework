@@ -1,7 +1,6 @@
 package com.github.alonsage.hardkore.di
 
 import java.util.*
-import kotlin.experimental.ExperimentalTypeInference
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 
@@ -25,16 +24,8 @@ typealias BeanFactory<T> = (@BinderDsl InjectionContext).() -> T
 
 @BinderDsl
 interface SetBinder<T> {
-    @BuilderInference
-    @OptIn(ExperimentalTypeInference::class)
     fun bindInstance(instance: T)
-
-    @BuilderInference
-    @OptIn(ExperimentalTypeInference::class)
     fun bindFactory(factory: BeanFactory<T>)
-
-    @BuilderInference
-    @OptIn(ExperimentalTypeInference::class)
     fun bindBatchFactory(factory: BeanFactory<Set<T>>)
 }
 
@@ -46,31 +37,15 @@ const val DEFAULT_PRECEDENCE = 0
 
 @BinderDsl
 interface ListBinder<T> {
-    @BuilderInference
-    @OptIn(ExperimentalTypeInference::class)
-    fun bindInstance(precedence: Int = DEFAULT_PRECEDENCE, instance: T)
-
-    @BuilderInference
-    @OptIn(ExperimentalTypeInference::class)
+    fun bindInstance(instance: T, precedence: Int = DEFAULT_PRECEDENCE)
     fun bindFactory(precedence: Int = DEFAULT_PRECEDENCE, factory: BeanFactory<T>)
-
-    @BuilderInference
-    @OptIn(ExperimentalTypeInference::class)
     fun bindBatchFactory(factory: BeanFactory<Map<T, Int>>)
 }
 
 @BinderDsl
 interface MapBinder<K, T> {
-    @BuilderInference
-    @OptIn(ExperimentalTypeInference::class)
     fun bindInstance(key: K, instance: T)
-
-    @BuilderInference
-    @OptIn(ExperimentalTypeInference::class)
     fun bindFactory(key: K, factory: BeanFactory<T>)
-
-    @BuilderInference
-    @OptIn(ExperimentalTypeInference::class)
     fun bindBatchFactory(factory: BeanFactory<Map<K, T>>)
 }
 
@@ -93,21 +68,21 @@ inline fun <reified T> Binder.bindSet(
     scope: Scope = Singleton,
     noinline block: SetBinder<T>.() -> Unit
 ) =
-    bindSet(beanRef(qualifier), scope, block)
+    bindSet(setBeanRef(qualifier), scope, block)
 
 inline fun <reified T> Binder.bindList(
     qualifier: Any? = null,
     scope: Scope = Singleton,
     noinline block: ListBinder<T>.() -> Unit
 ) =
-    bindList(beanRef(qualifier), scope, block)
+    bindList(listBeanRef(qualifier), scope, block)
 
 inline fun <reified K, reified T> Binder.bindMap(
     qualifier: Any? = null,
     scope: Scope = Singleton,
     noinline block: MapBinder<K, T>.() -> Unit
 ) =
-    bindMap(beanRef(qualifier), scope, block)
+    bindMap(mapBeanRef(qualifier), scope, block)
 
 inline fun <reified T> Binder.requireBean(qualifier: Any? = null) =
     requireBean(beanRef<T>(qualifier))
@@ -153,7 +128,7 @@ internal class DefaultBinder(
         if (ref in bindings) {
             val found = bindings[ref]
             require(found is ListBinding<*>) { "Bean is already bound: $ref" }
-            require(found.scope == scope) { "Set bean is already bound into another scope: $ref in ${found.scope} scope" }
+            require(found.scope == scope) { "List bean is already bound into another scope: $ref in ${found.scope} scope" }
 
             @Suppress("UNCHECKED_CAST")
             found as ListBinding<T>
@@ -200,7 +175,7 @@ internal class DefaultBinder(
 
     fun checkRequirements() {
         requirements.forEach { ref ->
-            require(ref in bindings) { "Missing required bean: $ref" }
+            check(ref in bindings) { "Missing required bean: $ref" }
         }
     }
 }
@@ -275,21 +250,21 @@ private constructor(
         batchFactories = binding.batchFactories.toMutableSet()
     )
 
-    override fun bindInstance(precedence: Int, instance: T) {
+    override fun bindInstance(instance: T, precedence: Int) {
         require(instances.put(instance, precedence) == null) {
-            "Set bean contains duplicating instances: $beanRef already has $instance"
+            "List bean contains duplicating instances: $beanRef already has $instance"
         }
     }
 
     override fun bindFactory(precedence: Int, factory: BeanFactory<T>) {
         require(factories.put(factory, precedence) == null) {
-            "Set bean contains duplicating factories: $beanRef already has $factory"
+            "List bean contains duplicating factories: $beanRef already has $factory"
         }
     }
 
     override fun bindBatchFactory(factory: BeanFactory<Map<T, Int>>) {
         require(batchFactories.add(factory)) {
-            "Set bean contains duplicating batch factories: $beanRef already has $factory"
+            "List bean contains duplicating batch factories: $beanRef already has $factory"
         }
     }
 

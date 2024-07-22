@@ -47,31 +47,34 @@ private constructor(
             withDependencyCycleChecking(ref) {
                 @Suppress("UNCHECKED_CAST")
                 when (val binding = bindings[ref] as Binding<T>?) {
-                    null -> parent?.bean(ref) ?: throw NoSuchElementException("Bean is not found: $ref")
+                    null -> {
+                        if (parent != null) parent.bean(ref)
+                        else throw NoSuchElementException("Bean is not found: $ref")
+                    }
 
                     is InstanceBinding -> binding.instance
 
                     is ScopedBinding -> {
-                        val beanRegistry = scopeContextStacks.top(binding.scope)?.beanRegistry
+                        val scopeContext = scopeContextStacks.top(binding.scope)
                             ?: error("Scoped bean can not be created out of scope: $ref in ${binding.scope} scope")
 
                         try {
                             when (binding) {
-                                is FactoryBinding -> beanRegistry.bean(ref) {
+                                is FactoryBinding -> scopeContext.beanRegistry.bean(ref) {
                                     binding.factory(this)
                                 }
 
-                                is SetBinding<*> -> beanRegistry.bean(ref) {
+                                is SetBinding<*> -> scopeContext.beanRegistry.bean(ref) {
                                     @Suppress("UNCHECKED_CAST")
                                     binding.constructBean() as T
                                 }
 
-                                is ListBinding<*> -> beanRegistry.bean(ref) {
+                                is ListBinding<*> -> scopeContext.beanRegistry.bean(ref) {
                                     @Suppress("UNCHECKED_CAST")
                                     binding.constructBean() as T
                                 }
 
-                                is MapBinding<*, *> -> beanRegistry.bean(ref) {
+                                is MapBinding<*, *> -> scopeContext.beanRegistry.bean(ref) {
                                     @Suppress("UNCHECKED_CAST")
                                     binding.constructBean() as T
                                 }

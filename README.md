@@ -33,13 +33,20 @@ plugins {
     kotlin("kapt")
 }
 
+repositories {
+    maven {
+        name = "HardKore"
+        url = uri("https://maven.pkg.github.com/alon-sage/hardkore-framework")
+    }
+}
+
 dependencies {
     // Enable processing @AutoService annotation
     kapt("com.google.auto.service:auto-service")
 
-    implementation(project(":hardkore-ktor-server-starter"))
+    implementation("com.github.alon-sage.hardkore:hardkore-ktor-server-starter:0.1.1")
 
-    testImplementation(project(":hardkore-ktor-server-testing"))
+    testImplementation("com.github.alon-sage.hardkore:hardkore-ktor-server-testing:0.1.1")
 }
 ```
 
@@ -113,12 +120,19 @@ plugins {
     id("com.apollographql.apollo3")
 }
 
+repositories {
+    maven {
+        name = "HardKore"
+        url = uri("https://maven.pkg.github.com/alon-sage/hardkore-framework")
+    }
+}
+
 dependencies {
     kapt("com.google.auto.service:auto-service")
 
-    implementation(project(":hardkore-graphql-server-starter"))
+    implementation("com.github.alon-sage.hardkore:hardkore-graphql-server-starter:0.1.1")
 
-    testImplementation(project(":hardkore-graphql-server-testing"))
+    testImplementation("com.github.alon-sage.hardkore:hardkore-graphql-server-testing:0.1.1")
 }
 
 apollo {

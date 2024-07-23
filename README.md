@@ -11,8 +11,11 @@ HardKore built on the next principles:
 * Modularization and extensibility
 * Incorporating widely recognized libraries
 
+## Table of contents
+
 <!-- TOC -->
 * [HardKore](#hardkore)
+  * [Table of contents](#table-of-contents)
   * [Quick Start](#quick-start)
     * [Web Server](#web-server)
     * [GraphQL Server](#graphql-server)

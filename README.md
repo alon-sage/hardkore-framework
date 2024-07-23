@@ -320,17 +320,17 @@ class ApplicationTest {
 
 ## Packages:
 
-* [hardkore](hardkore/README.md) - implements dependency injection, configuration, lifecycles,
+* [hardkore](hardkore) - implements dependency injection, configuration, lifecycles,
   observability, and some useful utilities
 
 
-* [hardkore-ktor-server](hardkore-ktor-server/README.md) - a Ktor server integration
-* [hardkore-ktor-server-starter](hardkore-ktor-server-starter/README.md) - a small wrapper that automatically registers
+* [hardkore-ktor-server](hardkore-ktor-server) - a Ktor server integration
+* [hardkore-ktor-server-starter](hardkore-ktor-server-starter) - a small wrapper that automatically registers
   Ktor server CLI command
-* [hardkore-ktor-server-testing](hardkore-ktor-server-testing/README.md) - implements utility to test server
+* [hardkore-ktor-server-testing](hardkore-ktor-server-testing) - implements utility to test server
 
 
-* [hardkore-graphql-server](hardkore-graphql-server/README.md) - a GraphQL server implementation on top of Ktor
-* [hardkore-graphql-server-starter](hardkore-graphql-server-starter/README.md) - a small wrapper that automatically
+* [hardkore-graphql-server](hardkore-graphql-server) - a GraphQL server implementation on top of Ktor
+* [hardkore-graphql-server-starter](hardkore-graphql-server-starter) - a small wrapper that automatically
   registers GraphQL server CLI command
-* [hardkore-graphql-server-testing](hardkore-graphql-server-testing/README.md) - implements utility to test server
+* [hardkore-graphql-server-testing](hardkore-graphql-server-testing) - implements utility to test server

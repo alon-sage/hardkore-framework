@@ -6,6 +6,10 @@ plugins {
     id("com.apollographql.apollo3")
 }
 
+description = """
+    HardKore utils to test GraphQL server
+""".trimIndent()
+
 dependencies {
     api(project(":hardkore-graphql-server"))
     api(project(":hardkore-ktor-server-testing"))
@@ -19,7 +23,7 @@ dependencies {
 apollo {
     service("service") {
         schemaFiles.from("src/test/resources/schema.graphql")
-        packageName.set("com.github.alonsage.hardkore.graphql.server.testing")
+        packageName.set("io.github.alonsage.hardkore.graphql.server.testing")
         srcDir("src/test/graphql")
         outputDirConnection {
             connectToKotlinSourceSet("test")

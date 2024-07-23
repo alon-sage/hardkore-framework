@@ -15,7 +15,7 @@ dependencies {
 apollo {
     service("service") {
         schemaFiles.from("src/main/resources/schema.graphql")
-        packageName.set("com.github.alonsage.hardkore.samples.graphqlserver")
+        packageName.set("io.github.alonsage.hardkore.samples.graphqlserver")
         srcDir("src/test/graphql")
         outputDirConnection {
             connectToKotlinSourceSet("test")

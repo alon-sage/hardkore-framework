@@ -5,6 +5,10 @@ plugins {
     id("publish-artifacts")
 }
 
+description = """
+    Packages used by HardKore. Use it to make your compatible libraries
+""".trimIndent()
+
 javaPlatform {
     allowDependencies()
 }

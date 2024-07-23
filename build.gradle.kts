@@ -28,7 +28,7 @@ plugins {
     id("com.github.jk1.dependency-license-report") version "2.8"
 }
 
-group = "com.github.alon-sage.hardkore"
+group = "io.github.alon-sage.hardkore"
 version = gitVersion()
 
 subprojects {

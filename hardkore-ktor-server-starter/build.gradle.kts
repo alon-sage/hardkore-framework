@@ -4,6 +4,10 @@ plugins {
     id("publish-artifacts")
 }
 
+description = """
+    HardKore small wrapper that automatically registers Ktor server CLI command
+""".trimIndent()
+
 dependencies {
     api(project(":hardkore-ktor-server"))
 

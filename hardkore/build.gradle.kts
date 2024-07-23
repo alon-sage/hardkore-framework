@@ -6,6 +6,10 @@ plugins {
     id("publish-artifacts")
 }
 
+description = """
+    HardKore implementation of an injection, configuration, lifecycles, observability, and some useful utilities
+""".trimIndent()
+
 dependencies {
     kapt("com.google.auto.service:auto-service")
 

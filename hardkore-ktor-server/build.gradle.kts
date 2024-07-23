@@ -5,6 +5,10 @@ plugins {
     id("publish-artifacts")
 }
 
+description = """
+    HardKore integration with a Ktor server
+""".trimIndent()
+
 dependencies {
     kapt("com.google.auto.service:auto-service")
 

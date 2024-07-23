@@ -6,6 +6,10 @@ plugins {
     id("publish-artifacts")
 }
 
+description = """
+    HardKore integration with a GraphQL Java
+""".trimIndent()
+
 dependencies {
     kapt("com.google.auto.service:auto-service")
 

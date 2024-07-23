@@ -5,6 +5,7 @@ plugins {
 afterEvaluate {
     extensions.findByType<JavaPluginExtension>()?.apply {
         withSourcesJar()
+        withJavadocJar()
     }
 
     tasks.withType<Jar>().findByName("jar")?.apply {
@@ -23,6 +24,8 @@ afterEvaluate {
                 components.findByName("javaPlatform")?.let { from(it) }
                 pom {
                     inceptionYear = "2024"
+                    name = "${project.group}:${project.name}"
+                    description = project.description
                     url = "https://github.com/alon-sage/hardkore-framework/"
                     scm {
                         url = "https://github.com/alon-sage/hardkore-framework/"

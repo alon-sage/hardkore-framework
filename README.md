@@ -47,9 +47,9 @@ dependencies {
     // Enable processing @AutoService annotation
     kapt("com.google.auto.service:auto-service")
 
-    implementation("com.github.alon-sage.hardkore:hardkore-ktor-server-starter:0.1.1")
+    implementation("io.github.alon-sage.hardkore:hardkore-ktor-server-starter:0.1.1")
 
-    testImplementation("com.github.alon-sage.hardkore:hardkore-ktor-server-testing:0.1.1")
+    testImplementation("io.github.alon-sage.hardkore:hardkore-ktor-server-testing:0.1.1")
 }
 ```
 
@@ -133,15 +133,15 @@ repositories {
 dependencies {
     kapt("com.google.auto.service:auto-service")
 
-    implementation("com.github.alon-sage.hardkore:hardkore-graphql-server-starter:0.1.1")
+    implementation("io.github.alon-sage.hardkore:hardkore-graphql-server-starter:0.1.1")
 
-    testImplementation("com.github.alon-sage.hardkore:hardkore-graphql-server-testing:0.1.1")
+    testImplementation("io.github.alon-sage.hardkore:hardkore-graphql-server-testing:0.1.1")
 }
 
 apollo {
     service("service") {
         schemaFiles.from("src/main/resources/schema.graphql")
-        packageName.set("com.github.alonsage.hardkore.samples.graphqlserver")
+        packageName.set("io.github.alonsage.hardkore.samples.graphqlserver")
         srcDir("src/test/graphql")
         outputDirConnection {
             connectToKotlinSourceSet("test")

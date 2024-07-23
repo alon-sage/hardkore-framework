@@ -1,0 +1,18 @@
+type Query {
+    user(id: ID): User
+}
+
+type Subscription {
+    userEvents(userId: ID): Event
+}
+
+type User {
+    id: ID
+    name: String
+    lastEvents(number: Int): [Event]
+}
+
+type Event {
+    id: ID
+    message: String
+}

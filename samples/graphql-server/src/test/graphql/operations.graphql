@@ -1,0 +1,17 @@
+query GetUserWithEvents($userId: ID, $eventsNumber: Int) {
+    user(id: $userId) {
+        id
+        name
+        lastEvents(number: $eventsNumber) {
+            id
+            message
+        }
+    }
+}
+
+subscription WatchEvents($userId: ID) {
+    userEvents(userId: $userId) {
+        id
+        message
+    }
+}

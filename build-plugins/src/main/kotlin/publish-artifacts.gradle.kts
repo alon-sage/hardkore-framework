@@ -1,3 +1,4 @@
+import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.com.github.gundy.semver4j.model.Version
 
 plugins {
@@ -16,7 +17,7 @@ afterEvaluate {
 
     mavenPublishing {
         if (isRelease()) {
-            publishToMavenCentral(automaticRelease = true)
+            publishToMavenCentral(host = SonatypeHost.CENTRAL_PORTAL, automaticRelease = true)
             signAllPublications()
         }
 

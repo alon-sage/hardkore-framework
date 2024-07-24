@@ -36,13 +36,6 @@ plugins {
     kotlin("kapt")
 }
 
-repositories {
-    maven {
-        name = "HardKore"
-        url = uri("https://maven.pkg.github.com/alon-sage/hardkore-framework")
-    }
-}
-
 dependencies {
     // Enable processing @AutoService annotation
     kapt("com.google.auto.service:auto-service")
@@ -121,13 +114,6 @@ plugins {
     kotlin("jvm")
     kotlin("kapt")
     id("com.apollographql.apollo3")
-}
-
-repositories {
-    maven {
-        name = "HardKore"
-        url = uri("https://maven.pkg.github.com/alon-sage/hardkore-framework")
-    }
 }
 
 dependencies {

@@ -1,13 +1,10 @@
+import org.jetbrains.kotlin.com.github.gundy.semver4j.model.Version
+
 plugins {
-    `maven-publish`
+    id("com.vanniktech.maven.publish")
 }
 
 afterEvaluate {
-    extensions.findByType<JavaPluginExtension>()?.apply {
-        withSourcesJar()
-        withJavadocJar()
-    }
-
     tasks.withType<Jar>().findByName("jar")?.apply {
         manifest {
             attributes(
@@ -17,48 +14,41 @@ afterEvaluate {
         }
     }
 
-    publishing {
-        publications {
-            create<MavenPublication>("Library") {
-                components.findByName("java")?.let { from(it) }
-                components.findByName("javaPlatform")?.let { from(it) }
-                pom {
-                    inceptionYear = "2024"
-                    name = "${project.group}:${project.name}"
-                    description = project.description
-                    url = "https://github.com/alon-sage/hardkore-framework/"
-                    scm {
-                        url = "https://github.com/alon-sage/hardkore-framework/"
-                        connection = "scm:git:git://github.com/alon-sage/hardkore-framework.git"
-                        developerConnection = "scm:git:ssh://git@github.com/alon-sage/hardkore-framework.git"
-                    }
-                    licenses {
-                        license {
-                            name = "Apache-2.0"
-                            url = "https://www.apache.org/licenses/LICENSE-2.0"
-                            distribution = "repo"
-                        }
-                    }
-                    developers {
-                        developer {
-                            id = "alon-sage"
-                            name = "Ivan Babintsev"
-                            url = "https://github.com/alon-sage/"
-                        }
-                    }
-                }
-            }
+    mavenPublishing {
+        if (isRelease()) {
+            publishToMavenCentral(automaticRelease = true)
+            signAllPublications()
         }
 
-        repositories {
-            maven {
-                name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/alon-sage/hardkore-framework")
-                credentials {
-                    username = System.getenv("GITHUB_ACTOR")
-                    password = System.getenv("GITHUB_TOKEN")
+        pom {
+            inceptionYear = "2024"
+            name = "${project.group}:${project.name}"
+            description = project.description
+            url = "https://github.com/alon-sage/hardkore-framework/"
+            scm {
+                url = "https://github.com/alon-sage/hardkore-framework/"
+                connection = "scm:git:git://github.com/alon-sage/hardkore-framework.git"
+                developerConnection = "scm:git:ssh://git@github.com/alon-sage/hardkore-framework.git"
+            }
+            licenses {
+                license {
+                    name = "Apache-2.0"
+                    url = "https://www.apache.org/licenses/LICENSE-2.0"
+                    distribution = "repo"
+                }
+            }
+            developers {
+                developer {
+                    id = "alon-sage"
+                    name = "Ivan Babintsev"
+                    url = "https://github.com/alon-sage/"
                 }
             }
         }
     }
 }
+
+fun isRelease(): Boolean =
+    Version.fromString(version.toString()).let {
+        it.preReleaseIdentifiers.isEmpty() && it.buildIdentifiers.isEmpty()
+    }

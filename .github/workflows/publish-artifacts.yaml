@@ -34,6 +34,6 @@ jobs:
         run: ./gradlew build --stacktrace
 
       - name: Publish packages
-        run: ./gradlew publish --stacktrace
+        run: ./gradlew publish --no-configuration-cache --stacktrace
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

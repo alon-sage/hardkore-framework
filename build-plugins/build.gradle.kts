@@ -12,6 +12,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("gradle-plugin"))
+    api("com.vanniktech.maven.publish:com.vanniktech.maven.publish.gradle.plugin:0.29.0")
 }
 
 tasks.withType<KotlinJvmCompile> {

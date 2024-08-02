@@ -1,5 +1,10 @@
 package io.github.alonsage.hardkore.graphql.server.dataclasses
 
+import graphql.language.EnumTypeDefinition
+import graphql.language.ObjectTypeDefinition
+import graphql.schema.DataFetchingEnvironment
+import graphql.schema.idl.TypeDefinitionRegistry
+import graphql.schema.idl.TypeRuntimeWiring
 import io.github.alonsage.hardkore.di.Binder
 import io.github.alonsage.hardkore.di.DiModule
 import io.github.alonsage.hardkore.di.bean
@@ -8,10 +13,6 @@ import io.github.alonsage.hardkore.di.bindSet
 import io.github.alonsage.hardkore.graphql.server.DataLoaderFactory
 import io.github.alonsage.hardkore.graphql.server.FederationTypeResolver
 import io.github.alonsage.hardkore.graphql.server.bindGraphQLFederationTypeResolver
-import graphql.language.ObjectTypeDefinition
-import graphql.schema.DataFetchingEnvironment
-import graphql.schema.idl.TypeDefinitionRegistry
-import graphql.schema.idl.TypeRuntimeWiring
 import kotlin.jvm.optionals.getOrNull
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -28,11 +29,12 @@ class GraphQLDataClassesDiModule : DiModule {
             bindFactory(Mutation::class) { operationTypeName(bean(), "mutation") }
             bindFactory(Subscription::class) { operationTypeName(bean(), "subscription") }
         }
+        bindMap<String, GraphQLEnumInfo<*>>(Qualifier) {}
         bindSet<Any>(Qualifier) {}
         bindMap<KClass<*>, DataLoaderFactory<*, *>>(Qualifier) {}
 
         bindSet {
-            bindBatchFactory { typeRuntimeWirings(bean(), bean(Qualifier), bean(Qualifier)) }
+            bindBatchFactory { typeRuntimeWirings(bean(), bean(Qualifier), bean(Qualifier), bean(Qualifier)) }
         }
         bindMap {
             bindBatchFactory { dataLoaders(bean(Qualifier), bean(Qualifier)) }
@@ -65,6 +67,7 @@ class GraphQLDataClassesDiModule : DiModule {
 
     private fun typeRuntimeWirings(
         typeDefinitionRegistry: TypeDefinitionRegistry,
+        enums: Map<String, GraphQLEnumInfo<*>>,
         dataClasses: Map<KClass<*>, String>,
         resolvers: Set<Any>
     ): Set<TypeRuntimeWiring> {
@@ -78,6 +81,23 @@ class GraphQLDataClassesDiModule : DiModule {
         }
 
         val wirings = mutableSetOf<TypeRuntimeWiring>()
+        for ((typeName, enumInfo) in enums) {
+            val typeDefinition = typeDefinitionRegistry.getType(typeName).getOrNull() as? EnumTypeDefinition
+                ?: error("GraphQL enum class bound to unknown enum type: ${enumInfo.kClass} to $typeName")
+            val knownValueNames = typeDefinition.enumValueDefinitions.map { it.name }.toSet()
+            enumInfo.valuesByName.forEach { (name, value) ->
+                check(name in knownValueNames) {
+                    "Enum value is associated with unknown GraphQL enum value: ${enumInfo.kClass}.$value with $typeName.$name"
+                }
+            }
+            val wiring = TypeRuntimeWiring.newTypeWiring(typeName)
+            wiring.enumValues {
+                checkNotNull(enumInfo.valuesByName[it]) {
+                    "Missing enum value associated with GraphQL enum value: $typeName.$it"
+                }
+            }
+            wirings.add(wiring.build())
+        }
         for ((dataClass, typeName) in dataClasses) {
             val typeDefinition = typeDefinitionRegistry.getType(typeName).getOrNull() as? ObjectTypeDefinition
                 ?: if (dataClass != Query::class && dataClass != Mutation::class && dataClass != Subscription::class) {

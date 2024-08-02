@@ -2,6 +2,10 @@ type Query {
     user(id: ID): User
 }
 
+type Mutation {
+    emitEvent(userId: ID, message: String, source: EventSource): Event
+}
+
 type Subscription {
     userEvents(userId: ID): Event
 }
@@ -12,7 +16,13 @@ type User {
     lastEvents(number: Int): [Event]
 }
 
+enum EventSource {
+    SYSTEM,
+    USER
+}
+
 type Event {
     id: ID
     message: String
+    source: EventSource
 }

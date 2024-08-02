@@ -8,6 +8,13 @@ import io.github.alonsage.hardkore.graphql.server.DataLoaderFactory
 import io.github.alonsage.hardkore.graphql.server.FederationDataLoaderFactory
 import kotlin.reflect.KClass
 
+inline fun <reified T : Enum<T>> Binder.bindGraphQLEnum(
+    typeName: String = checkNotNull(T::class.simpleName),
+    nameOverrides: Map<T, String> = emptyMap()
+) =
+    bindMap<String, GraphQLEnumInfo<*>>(GraphQLDataClassesDiModule.Qualifier) {
+        bindInstance(typeName, GraphQLEnumInfo(T::class, enumValues<T>().associateBy { nameOverrides[it] ?: it.name }))
+    }
 
 inline fun <reified T> Binder.bindGraphQLDataClass(typeName: String = checkNotNull(T::class.simpleName)) =
     bindMap<KClass<*>, String>(GraphQLDataClassesDiModule.Qualifier) {

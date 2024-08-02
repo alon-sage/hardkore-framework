@@ -3,6 +3,7 @@ package io.github.alonsage.hardkore.samples.graphqlserver
 import io.github.alonsage.hardkore.graphql.server.GraphQLServerDiProfile
 import io.github.alonsage.hardkore.graphql.server.testing.graphql
 import io.github.alonsage.hardkore.ktor.server.testing.webApplicationTest
+import io.github.alonsage.hardkore.samples.graphqlserver.type.EventSource
 import io.ktor.client.plugins.websocket.WebSockets
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
@@ -30,6 +31,24 @@ class ApplicationTest {
                 assertEquals(query.userId, user.id)
                 assertEquals(query.eventsNumber, user.lastEvents?.size)
             }
+        }
+    }
+
+    @Test
+    fun `emits event`() {
+        webApplicationTest(GraphQLServerDiProfile::class) { client ->
+            val mutation = EmitEventMutation(
+                userId = UUID.randomUUID().toString(),
+                message = "Foo bar",
+                source = EventSource.entries.filter { it != EventSource.UNKNOWN__ }.random()
+            )
+            val data = client.graphql().mutation(mutation).execute().let { result ->
+                assertNull(result.exception)
+                assertNull(result.errors)
+                assertNotNull(result.data)
+            }
+            assertEquals(mutation.message, data.emitEvent?.message)
+            assertEquals(mutation.source, data.emitEvent?.source)
         }
     }
 

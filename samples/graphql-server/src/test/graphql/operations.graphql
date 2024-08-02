@@ -5,7 +5,16 @@ query GetUserWithEvents($userId: ID, $eventsNumber: Int) {
         lastEvents(number: $eventsNumber) {
             id
             message
+            source
         }
+    }
+}
+
+mutation EmitEvent($userId: ID, $message: String, $source: EventSource) {
+    emitEvent(userId: $userId, message: $message, source: $source) {
+        id
+        message
+        source
     }
 }
 
@@ -13,5 +22,6 @@ subscription WatchEvents($userId: ID) {
     userEvents(userId: $userId) {
         id
         message
+        source
     }
 }

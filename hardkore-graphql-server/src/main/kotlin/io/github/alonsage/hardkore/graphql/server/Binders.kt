@@ -1,15 +1,17 @@
 package io.github.alonsage.hardkore.graphql.server
 
-import io.github.alonsage.hardkore.di.BeanFactory
-import io.github.alonsage.hardkore.di.Binder
-import io.github.alonsage.hardkore.di.DEFAULT_PRECEDENCE
-import io.github.alonsage.hardkore.di.bindList
-import io.github.alonsage.hardkore.di.bindMap
-import io.github.alonsage.hardkore.di.bindSet
+import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.instrumentation.Instrumentation
 import graphql.schema.GraphQLScalarType
 import graphql.schema.idl.SchemaDirectiveWiring
 import graphql.schema.idl.TypeRuntimeWiring
+import io.github.alonsage.hardkore.di.BeanFactory
+import io.github.alonsage.hardkore.di.Binder
+import io.github.alonsage.hardkore.di.DEFAULT_PRECEDENCE
+import io.github.alonsage.hardkore.di.bindFactory
+import io.github.alonsage.hardkore.di.bindList
+import io.github.alonsage.hardkore.di.bindMap
+import io.github.alonsage.hardkore.di.bindSet
 
 fun Binder.bindGraphQLScalarType(factory: BeanFactory<GraphQLScalarType>) =
     bindSet {
@@ -52,3 +54,6 @@ fun Binder.bindGraphQLFederationTypeResolver(factory: BeanFactory<FederationType
     bindSet {
         bindFactory(factory)
     }
+
+fun Binder.bindGraphQLExceptionHandler(factory: BeanFactory<DataFetcherExceptionHandler>) =
+    bindFactory<DataFetcherExceptionHandler?>(factory = factory)

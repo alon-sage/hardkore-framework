@@ -250,6 +250,13 @@ class DiContextTest {
         )
     }
 
+    @Test
+    fun `resolves nullable bean types to null`() {
+        val context = DiContext { }
+        val instance: String? = context.bean()
+        assertNull(instance)
+    }
+
     class SelfReferencingObject(val dependency: SelfReferencingObject)
 
     class SelfReferencingObject1(val dependency: SelfReferencingObject2)

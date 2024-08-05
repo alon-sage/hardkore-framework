@@ -2,26 +2,14 @@ package io.github.alonsage.hardkore.graphql.server
 
 import com.apollographql.federation.graphqljava.Federation
 import com.apollographql.federation.graphqljava._Entity
-import io.github.alonsage.hardkore.config.bindConfigBean
-import io.github.alonsage.hardkore.di.Binder
-import io.github.alonsage.hardkore.di.DiModule
-import io.github.alonsage.hardkore.di.DiProfiles
-import io.github.alonsage.hardkore.di.Prototype
-import io.github.alonsage.hardkore.di.bean
-import io.github.alonsage.hardkore.di.bindFactory
-import io.github.alonsage.hardkore.di.bindList
-import io.github.alonsage.hardkore.di.bindMap
-import io.github.alonsage.hardkore.di.bindSet
-import io.github.alonsage.hardkore.graphql.server.dataclasses.GraphQLDataClassesDiModule
-import io.github.alonsage.hardkore.graphql.server.scalars.SecretScalar
-import io.github.alonsage.hardkore.ktor.server.KtorServerDiModule
-import io.github.alonsage.hardkore.ktor.server.bindKtorModule
 import com.google.auto.service.AutoService
 import graphql.ErrorType
 import graphql.GraphQL
 import graphql.GraphQLError
 import graphql.execution.AsyncExecutionStrategy
 import graphql.execution.AsyncSerialExecutionStrategy
+import graphql.execution.DataFetcherExceptionHandler
+import graphql.execution.SimpleDataFetcherExceptionHandler
 import graphql.execution.SubscriptionExecutionStrategy
 import graphql.execution.instrumentation.ChainedInstrumentation
 import graphql.execution.instrumentation.Instrumentation
@@ -38,6 +26,20 @@ import graphql.schema.idl.TypeDefinitionRegistry
 import graphql.schema.idl.TypeRuntimeWiring
 import graphql.schema.idl.errors.SchemaProblem
 import graphql.schema.impl.SchemaUtil
+import io.github.alonsage.hardkore.config.bindConfigBean
+import io.github.alonsage.hardkore.di.Binder
+import io.github.alonsage.hardkore.di.DiModule
+import io.github.alonsage.hardkore.di.DiProfiles
+import io.github.alonsage.hardkore.di.Prototype
+import io.github.alonsage.hardkore.di.bean
+import io.github.alonsage.hardkore.di.bindFactory
+import io.github.alonsage.hardkore.di.bindList
+import io.github.alonsage.hardkore.di.bindMap
+import io.github.alonsage.hardkore.di.bindSet
+import io.github.alonsage.hardkore.graphql.server.dataclasses.GraphQLDataClassesDiModule
+import io.github.alonsage.hardkore.graphql.server.scalars.SecretScalar
+import io.github.alonsage.hardkore.ktor.server.KtorServerDiModule
+import io.github.alonsage.hardkore.ktor.server.bindKtorModule
 import org.dataloader.BatchLoaderContextProvider
 import org.dataloader.DataLoaderRegistry
 import java.util.concurrent.CompletableFuture
@@ -62,7 +64,7 @@ class GraphQLServerDiModule : DiModule {
         bindFactory { runtimeWiring(bean(), bean(), bean()) }
         bindFactory { graphQLSchema(bean(), bean(), bean(), bean(), bean()) }
         bindFactory(scope = Prototype) { dataLoaderRegistryFactory(bean()) }
-        bindFactory { graphQL(bean(), bean()) }
+        bindFactory { graphQL(bean(), bean(), bean()) }
 
         bindKtorModule { GraphQLKtorModule(bean(), bean(), bean()) }
 
@@ -166,12 +168,14 @@ class GraphQLServerDiModule : DiModule {
 
     private fun graphQL(
         schema: GraphQLSchema,
-        instrumentations: List<Instrumentation>
+        instrumentations: List<Instrumentation>,
+        exceptionHandler: DataFetcherExceptionHandler?
     ): GraphQL =
         GraphQL.newGraphQL(schema)
             .queryExecutionStrategy(AsyncExecutionStrategy())
             .mutationExecutionStrategy(AsyncSerialExecutionStrategy())
             .subscriptionExecutionStrategy(SubscriptionExecutionStrategy())
             .instrumentation(ChainedInstrumentation(instrumentations))
+            .defaultDataFetcherExceptionHandler(exceptionHandler ?: SimpleDataFetcherExceptionHandler())
             .build()
 }

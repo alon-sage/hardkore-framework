@@ -49,6 +49,7 @@ private constructor(
                 when (val binding = bindings[ref] as Binding<T>?) {
                     null -> {
                         if (parent != null) parent.bean(ref)
+                        else if (ref.kType.isMarkedNullable) null as T
                         else throw NoSuchElementException("Bean is not found: $ref")
                     }
 

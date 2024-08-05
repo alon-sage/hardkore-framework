@@ -40,9 +40,9 @@ dependencies {
     // Enable processing @AutoService annotation
     kapt("com.google.auto.service:auto-service")
 
-    implementation("io.github.alon-sage.hardkore:hardkore-ktor-server-starter:0.1.1")
+    implementation("io.github.alon-sage.hardkore:hardkore-ktor-server-starter:0.3.0")
 
-    testImplementation("io.github.alon-sage.hardkore:hardkore-ktor-server-testing:0.1.1")
+    testImplementation("io.github.alon-sage.hardkore:hardkore-ktor-server-testing:0.3.0")
 }
 ```
 
@@ -119,9 +119,9 @@ plugins {
 dependencies {
     kapt("com.google.auto.service:auto-service")
 
-    implementation("io.github.alon-sage.hardkore:hardkore-graphql-server-starter:0.1.1")
+    implementation("io.github.alon-sage.hardkore:hardkore-graphql-server-starter:0.3.0")
 
-    testImplementation("io.github.alon-sage.hardkore:hardkore-graphql-server-testing:0.1.1")
+    testImplementation("io.github.alon-sage.hardkore:hardkore-graphql-server-testing:0.3.0")
 }
 
 apollo {

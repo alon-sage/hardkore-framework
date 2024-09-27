@@ -170,12 +170,14 @@ class GraphQLServerDiModule : DiModule {
         schema: GraphQLSchema,
         instrumentations: List<Instrumentation>,
         exceptionHandler: DataFetcherExceptionHandler?
-    ): GraphQL =
-        GraphQL.newGraphQL(schema)
-            .queryExecutionStrategy(AsyncExecutionStrategy())
-            .mutationExecutionStrategy(AsyncSerialExecutionStrategy())
-            .subscriptionExecutionStrategy(SubscriptionExecutionStrategy())
+    ): GraphQL {
+        val actualExceptionHandler = exceptionHandler ?: SimpleDataFetcherExceptionHandler()
+        return GraphQL.newGraphQL(schema)
+            .queryExecutionStrategy(AsyncExecutionStrategy(actualExceptionHandler))
+            .mutationExecutionStrategy(AsyncSerialExecutionStrategy(actualExceptionHandler))
+            .subscriptionExecutionStrategy(SubscriptionExecutionStrategy(actualExceptionHandler))
             .instrumentation(ChainedInstrumentation(instrumentations))
-            .defaultDataFetcherExceptionHandler(exceptionHandler ?: SimpleDataFetcherExceptionHandler())
+            .defaultDataFetcherExceptionHandler(actualExceptionHandler)
             .build()
+    }
 }

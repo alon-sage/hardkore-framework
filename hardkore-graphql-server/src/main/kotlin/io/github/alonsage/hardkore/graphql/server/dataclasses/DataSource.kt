@@ -1,15 +1,17 @@
 package io.github.alonsage.hardkore.graphql.server.dataclasses
 
-import io.github.alonsage.hardkore.fqdn.Fqdn
-import io.github.alonsage.hardkore.graphql.server.coroutineScope
 import graphql.language.FieldDefinition
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
+import io.github.alonsage.hardkore.fqdn.Fqdn
+import io.github.alonsage.hardkore.graphql.server.coroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.future.future
 import kotlinx.coroutines.reactive.asPublisher
+import java.lang.reflect.InvocationTargetException
 import java.util.*
+import java.util.concurrent.CompletableFuture
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
@@ -64,11 +66,19 @@ internal sealed interface DataSource : DataFetcher<Any?> {
                 }
             }
             val result = if (function.isSuspend) {
-                environment.coroutineScope.future(start = CoroutineStart.UNDISPATCHED) {
-                    function.callSuspendBy(arguments)
-                }
+                environment.coroutineScope
+                    .future(start = CoroutineStart.UNDISPATCHED) { function.callSuspendBy(arguments) }
+                    .exceptionallyCompose {
+                        val actualException = if (it is InvocationTargetException) it.targetException else it
+                        CompletableFuture.failedFuture<Any?>(actualException)
+                    }
             } else {
-                function.callBy(arguments)
+                try {
+                    function.callBy(arguments)
+                } catch (e: Exception) {
+                    val actualException = if (e is InvocationTargetException) e.targetException else e
+                    CompletableFuture.failedFuture<Any?>(actualException)
+                }
             }
             return if (isFlowSubscription) {
                 @Suppress("UNCHECKED_CAST")

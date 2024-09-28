@@ -93,9 +93,6 @@ internal sealed interface DataSource : DataFetcher<Any?> {
                 value == null ->
                     if (targetType.isMarkedNullable) null else error("Can not convert null to $targetType")
 
-                targetType.jvmErasure.isInstance(value) ->
-                    value
-
                 targetType.classifier == UUID::class ->
                     UUID.fromString(value.toString())
 
@@ -107,6 +104,9 @@ internal sealed interface DataSource : DataFetcher<Any?> {
 
                 targetType.jvmErasure.isData && value is Map<*, *> ->
                     makeDataClass(value, targetType.jvmErasure)
+
+                targetType.jvmErasure.isInstance(value) ->
+                    value
 
                 else ->
                     error("Can not convert $value to $targetType")

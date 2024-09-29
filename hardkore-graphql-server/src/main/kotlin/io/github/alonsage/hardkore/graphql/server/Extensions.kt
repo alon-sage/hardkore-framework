@@ -14,8 +14,11 @@ val GraphQLContext.coroutineScope: CoroutineScope
 val DataFetchingEnvironment.coroutineScope: CoroutineScope
     get() = graphQlContext.coroutineScope
 
+val BatchLoaderEnvironment.applicationCall: ApplicationCall
+    get() = (getContext() as BatchContext).applicationCall
+
 val BatchLoaderEnvironment.coroutineScope: CoroutineScope
-    get() = getContext() as CoroutineScope
+    get() = (getContext() as BatchContext).coroutineScope
 
 
 val GraphQLContext.applicationCall: ApplicationCall

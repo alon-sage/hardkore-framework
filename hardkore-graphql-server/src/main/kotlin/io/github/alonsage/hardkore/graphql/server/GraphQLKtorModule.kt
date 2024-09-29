@@ -1,14 +1,14 @@
 package io.github.alonsage.hardkore.graphql.server
 
+import graphql.ExecutionResult
+import graphql.GraphQL
+import graphql.GraphQLContext
 import io.github.alonsage.hardkore.graphql.server.dto.GraphQLErrorDto
 import io.github.alonsage.hardkore.graphql.server.dto.GraphQLRequestDto
 import io.github.alonsage.hardkore.graphql.server.dto.GraphQLResponseDto
 import io.github.alonsage.hardkore.graphql.server.dto.GraphQLSubscriptionMessageDto
 import io.github.alonsage.hardkore.graphql.server.dto.GraphQLSubscriptionStatus
 import io.github.alonsage.hardkore.ktor.server.KtorModule
-import graphql.ExecutionResult
-import graphql.GraphQL
-import graphql.GraphQLContext
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
@@ -88,7 +88,7 @@ class GraphQLKtorModule(
             supervisorScope {
                 val request: GraphQLRequestDto = call.receive()
                 val executionInput = request.executionInput(
-                    dataLoaderRegistry = dataLoaderRegistryFactory.dataLoaderRegistry(this),
+                    dataLoaderRegistry = dataLoaderRegistryFactory.dataLoaderRegistry(call, this),
                     coroutineScope = this,
                     context = mapOf(ApplicationCall::class to call)
                 )
@@ -157,7 +157,7 @@ class GraphQLKtorModule(
                             else -> {
                                 val job = launch {
                                     val executionInput = message.payload.executionInput(
-                                        dataLoaderRegistry = dataLoaderRegistryFactory.dataLoaderRegistry(this),
+                                        dataLoaderRegistry = dataLoaderRegistryFactory.dataLoaderRegistry(call, this),
                                         coroutineScope = this,
                                         context = mapOf(ApplicationCall::class to call)
                                     )

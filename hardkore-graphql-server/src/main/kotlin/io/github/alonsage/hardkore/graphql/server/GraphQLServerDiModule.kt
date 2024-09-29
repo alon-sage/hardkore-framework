@@ -95,8 +95,10 @@ class GraphQLServerDiModule : DiModule {
             .build()
 
     private fun dataLoaderRegistryFactory(dataLoaders: Map<String, DataLoaderFactory<*, *>>): DataLoaderRegistryFactory =
-        DataLoaderRegistryFactory { coroutineScope ->
-            val contextProvider = BatchLoaderContextProvider { coroutineScope }
+        DataLoaderRegistryFactory { applicationCall, coroutineScope ->
+            val contextProvider = BatchLoaderContextProvider {
+                BatchContext(applicationCall, coroutineScope)
+            }
             DataLoaderRegistry().apply {
                 dataLoaders.forEach { (name, factory) -> register(name, factory.dataLoader(contextProvider)) }
             }

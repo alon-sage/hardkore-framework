@@ -59,10 +59,11 @@ class GraphQLServerDiModule : DiModule {
         bindList<Instrumentation> {}
         bindSet<FederationTypeResolver> {}
         bindMap<String, DataLoaderFactory<*, *>> {}
+        bindSet<(GraphQLSchema.Builder) -> Unit> {}
 
         bindFactory { typeDefinitionRegistry(bean()) }
         bindFactory { runtimeWiring(bean(), bean(), bean()) }
-        bindFactory { graphQLSchema(bean(), bean(), bean(), bean(), bean()) }
+        bindFactory { graphQLSchema(bean(), bean(), bean(), bean(), bean(), bean()) }
         bindFactory(scope = Prototype) { dataLoaderRegistryFactory(bean()) }
         bindFactory { graphQL(bean(), bean(), bean()) }
 
@@ -109,17 +110,20 @@ class GraphQLServerDiModule : DiModule {
         registry: TypeDefinitionRegistry,
         wiring: RuntimeWiring,
         typeResolvers: Set<FederationTypeResolver>,
-        dataLoaders: Map<String, DataLoaderFactory<*, *>>
+        dataLoaders: Map<String, DataLoaderFactory<*, *>>,
+        transformers: Set<(GraphQLSchema.Builder) -> Unit>,
     ): GraphQLSchema =
         if (properties.federation) {
             Federation.transform(registry, wiring)
                 .resolveEntityType(federationTypeResolver(typeResolvers))
                 .fetchEntities(federationDataFetcher())
                 .build()
+                .let { schema -> transformers.fold(schema, GraphQLSchema::transform) }
                 .apply { validate(wiring, dataLoaders) }
         } else {
             SchemaGenerator()
                 .makeExecutableSchema(registry, wiring)
+                .let { schema -> transformers.fold(schema, GraphQLSchema::transform) }
                 .apply { validate(wiring, dataLoaders) }
         }
 

@@ -3,6 +3,7 @@ package io.github.alonsage.hardkore.graphql.server
 import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.instrumentation.Instrumentation
 import graphql.schema.GraphQLScalarType
+import graphql.schema.GraphQLSchema
 import graphql.schema.idl.SchemaDirectiveWiring
 import graphql.schema.idl.TypeRuntimeWiring
 import io.github.alonsage.hardkore.di.BeanFactory
@@ -57,3 +58,8 @@ fun Binder.bindGraphQLFederationTypeResolver(factory: BeanFactory<FederationType
 
 fun Binder.bindGraphQLExceptionHandler(factory: BeanFactory<DataFetcherExceptionHandler>) =
     bindFactory<DataFetcherExceptionHandler?>(factory = factory)
+
+fun Binder.bindGraphQLSchemaTransformer(factory: BeanFactory<(GraphQLSchema.Builder) -> Unit>) =
+    bindSet {
+        bindFactory(factory)
+    }

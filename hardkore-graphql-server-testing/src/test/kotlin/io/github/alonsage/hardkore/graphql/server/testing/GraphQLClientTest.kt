@@ -1,14 +1,11 @@
 package io.github.alonsage.hardkore.graphql.server.testing
 
 import io.github.alonsage.hardkore.graphql.server.GraphQLServerDiProfile
-import io.github.alonsage.hardkore.graphql.server.dto.GraphQLSubscriptionMessageDto
 import io.github.alonsage.hardkore.ktor.server.testing.webApplicationTest
 import io.ktor.client.plugins.websocket.WebSockets
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertEquals

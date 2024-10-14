@@ -13,6 +13,7 @@ import io.github.alonsage.hardkore.di.bindFactory
 import io.github.alonsage.hardkore.di.bindList
 import io.github.alonsage.hardkore.di.bindMap
 import io.github.alonsage.hardkore.di.bindSet
+import java.util.function.Consumer
 
 fun Binder.bindGraphQLScalarType(factory: BeanFactory<GraphQLScalarType>) =
     bindSet {
@@ -59,7 +60,7 @@ fun Binder.bindGraphQLFederationTypeResolver(factory: BeanFactory<FederationType
 fun Binder.bindGraphQLExceptionHandler(factory: BeanFactory<DataFetcherExceptionHandler>) =
     bindFactory<DataFetcherExceptionHandler?>(factory = factory)
 
-fun Binder.bindGraphQLSchemaTransformer(factory: BeanFactory<(GraphQLSchema.Builder) -> Unit>) =
+fun Binder.bindGraphQLSchemaTransformer(factory: BeanFactory<Consumer<GraphQLSchema.Builder>>) =
     bindSet {
         bindFactory(factory)
     }

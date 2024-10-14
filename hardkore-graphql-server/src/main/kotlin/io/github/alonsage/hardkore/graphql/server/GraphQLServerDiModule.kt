@@ -43,6 +43,7 @@ import io.github.alonsage.hardkore.ktor.server.bindKtorModule
 import org.dataloader.BatchLoaderContextProvider
 import org.dataloader.DataLoaderRegistry
 import java.util.concurrent.CompletableFuture
+import java.util.function.Consumer
 
 @AutoService(DiModule::class)
 @DiProfiles(GraphQLServerDiProfile::class)
@@ -59,7 +60,7 @@ class GraphQLServerDiModule : DiModule {
         bindList<Instrumentation> {}
         bindSet<FederationTypeResolver> {}
         bindMap<String, DataLoaderFactory<*, *>> {}
-        bindSet<(GraphQLSchema.Builder) -> Unit> {}
+        bindSet<Consumer<GraphQLSchema.Builder>> {}
 
         bindFactory { typeDefinitionRegistry(bean()) }
         bindFactory { runtimeWiring(bean(), bean(), bean()) }
@@ -111,7 +112,7 @@ class GraphQLServerDiModule : DiModule {
         wiring: RuntimeWiring,
         typeResolvers: Set<FederationTypeResolver>,
         dataLoaders: Map<String, DataLoaderFactory<*, *>>,
-        transformers: Set<(GraphQLSchema.Builder) -> Unit>,
+        transformers: Set<Consumer<GraphQLSchema.Builder>>,
     ): GraphQLSchema =
         if (properties.federation) {
             Federation.transform(registry, wiring)

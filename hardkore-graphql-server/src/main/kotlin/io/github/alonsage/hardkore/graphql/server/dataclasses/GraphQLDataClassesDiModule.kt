@@ -84,7 +84,12 @@ class GraphQLDataClassesDiModule : DiModule {
         for ((typeName, enumInfo) in enums) {
             val typeDefinition = typeDefinitionRegistry.getType(typeName).getOrNull() as? EnumTypeDefinition
                 ?: error("GraphQL enum class bound to unknown enum type: ${enumInfo.kClass} to $typeName")
-            val knownValueNames = typeDefinition.enumValueDefinitions.map { it.name }.toSet()
+            val knownValueNames =
+                typeDefinitionRegistry.enumTypeExtensions()[typeName]
+                    ?.flatMap { it.enumValueDefinitions }
+                    .orEmpty()
+                    .plus(typeDefinition.enumValueDefinitions)
+                    .map { it.name }.toSet()
             enumInfo.valuesByName.forEach { (name, value) ->
                 check(name in knownValueNames) {
                     "Enum value is associated with unknown GraphQL enum value: ${enumInfo.kClass}.$value with $typeName.$name"
@@ -107,7 +112,11 @@ class GraphQLDataClassesDiModule : DiModule {
                 }
             val wiring = TypeRuntimeWiring.newTypeWiring(typeName)
             val dataClassSources = checkNotNull(allSources[dataClass])
-            typeDefinition.fieldDefinitions.forEach { fieldDefinition ->
+            val fieldDefinitions = typeDefinitionRegistry.objectTypeExtensions()[typeName]
+                ?.flatMap { it.fieldDefinitions }
+                .orEmpty()
+                .plus(typeDefinition.fieldDefinitions)
+            fieldDefinitions.forEach { fieldDefinition ->
                 val fieldSources = dataClassSources.filter { it.matches(fieldDefinition) }
                 when {
                     fieldSources.size == 1 -> wiring.dataFetcher(fieldDefinition.name, fieldSources.single())

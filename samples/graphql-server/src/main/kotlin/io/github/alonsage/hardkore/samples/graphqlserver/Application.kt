@@ -12,6 +12,7 @@ import io.github.alonsage.hardkore.graphql.server.dataclasses.bindGraphQLDataCla
 import io.github.alonsage.hardkore.graphql.server.dataclasses.bindGraphQLEnum
 import io.github.alonsage.hardkore.graphql.server.dataclasses.bindGraphQLResolver
 import io.github.alonsage.hardkore.runtime.runApplication
+import io.ktor.http.content.PartData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -24,6 +25,7 @@ import java.util.*
 class SampleDiModule : DiModule {
     override fun Binder.install() {
         bindGraphQLDataClass<User>()
+        bindGraphQLDataClass<FileInfo>()
         bindGraphQLEnum<EventSource>()
         bindGraphQLDataClass<Event>()
         bindGraphQLResolver { DummyResolver() }
@@ -35,6 +37,8 @@ data class User(val id: UUID, val name: String)
 enum class EventSource { SYSTEM, USER }
 
 data class Event(val id: UUID, val message: String, val source: EventSource)
+
+data class FileInfo(val name: String, val type: String, val content: String)
 
 // A dummy resolver that mocks DB access
 class DummyResolver {
@@ -50,6 +54,14 @@ class DummyResolver {
     @Suppress("UNUSED_PARAMETER")
     suspend fun Mutation.emitEvent(userId: UUID, message: String, source: EventSource): Event =
         Event(UUID.randomUUID(), message, source)
+
+    // Upload file to storage
+    suspend fun Mutation.upload(file: PartData.FileItem): FileInfo =
+        FileInfo(
+            name = file.originalFileName ?: "",
+            type = file.contentType.toString(),
+            content = file.provider().readText()
+        )
 
     // Watches and load new events from DB
     fun Subscription.userEvents(userId: UUID): Flow<Event> =

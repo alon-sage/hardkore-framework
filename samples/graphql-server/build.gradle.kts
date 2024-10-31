@@ -21,5 +21,6 @@ apollo {
             connectToKotlinSourceSet("test")
         }
         generateOptionalOperationVariables = false
+        mapScalarToUpload("File")
     }
 }

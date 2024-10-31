@@ -10,13 +10,25 @@ import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.intOrNull
 
-internal fun JsonElement.toKotlin(): Any? =
+internal fun JsonElement.toKotlin(path: String, overrides: Map<String, Any?>): Any? =
     when (this) {
-        JsonNull -> null
-        is JsonPrimitive -> if (isString) content else booleanOrNull ?: intOrNull ?: doubleOrNull ?: contentOrNull
-        is JsonArray -> map { item -> item.toKotlin() }
-        is JsonObject -> mapValues { (_, value) -> value.toKotlin() }
+        is JsonPrimitive -> toKotlin(path, overrides)
+        is JsonArray -> toKotlin(path, overrides)
+        is JsonObject -> toKotlin(path, overrides)
     }
+
+internal fun JsonPrimitive.toKotlin(path: String, overrides: Map<String, Any?>): Any? =
+    if (path in overrides) overrides[path] else {
+        if (this == JsonNull) null
+        else if (isString) content
+        else booleanOrNull ?: intOrNull ?: doubleOrNull ?: contentOrNull
+    }
+
+internal fun JsonArray.toKotlin(path: String, overrides: Map<String, Any?>): List<Any?> =
+    mapIndexed { index, item -> item.toKotlin("${path}.${index}", overrides) }
+
+internal fun JsonObject.toKotlin(path: String, overrides: Map<String, Any?>): Map<String, Any?> =
+    mapValues { (key, value) -> value.toKotlin("${path}.${key}", overrides) }
 
 @Suppress("UNCHECKED_CAST")
 internal fun Any?.toJsonElement(): JsonElement =

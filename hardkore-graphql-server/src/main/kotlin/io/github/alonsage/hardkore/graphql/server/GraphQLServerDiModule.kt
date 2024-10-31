@@ -37,6 +37,7 @@ import io.github.alonsage.hardkore.di.bindList
 import io.github.alonsage.hardkore.di.bindMap
 import io.github.alonsage.hardkore.di.bindSet
 import io.github.alonsage.hardkore.graphql.server.dataclasses.GraphQLDataClassesDiModule
+import io.github.alonsage.hardkore.graphql.server.scalars.FileScalar
 import io.github.alonsage.hardkore.graphql.server.scalars.SecretScalar
 import io.github.alonsage.hardkore.ktor.server.KtorServerDiModule
 import io.github.alonsage.hardkore.ktor.server.bindKtorModule
@@ -71,6 +72,7 @@ class GraphQLServerDiModule : DiModule {
         bindKtorModule { GraphQLKtorModule(bean(), bean(), bean()) }
 
         bindGraphQLScalarType { SecretScalar.type }
+        bindGraphQLScalarType { FileScalar.type }
     }
 
     private fun typeDefinitionRegistry(

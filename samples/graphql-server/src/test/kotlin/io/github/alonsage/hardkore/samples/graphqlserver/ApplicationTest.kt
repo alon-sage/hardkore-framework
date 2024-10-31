@@ -1,5 +1,6 @@
 package io.github.alonsage.hardkore.samples.graphqlserver
 
+import com.apollographql.apollo3.api.DefaultUpload
 import io.github.alonsage.hardkore.graphql.server.GraphQLServerDiProfile
 import io.github.alonsage.hardkore.graphql.server.testing.graphql
 import io.github.alonsage.hardkore.ktor.server.testing.webApplicationTest
@@ -49,6 +50,27 @@ class ApplicationTest {
             }
             assertEquals(mutation.message, data.emitEvent?.message)
             assertEquals(mutation.source, data.emitEvent?.source)
+        }
+    }
+
+    @Test
+    fun `upload file`() {
+        webApplicationTest(GraphQLServerDiProfile::class) { client ->
+            val mutation = UploadMutation(
+                file = DefaultUpload.Builder()
+                    .fileName("example.txt")
+                    .contentType("text/plain")
+                    .content("Hello World!")
+                    .build()
+            )
+            val data = client.graphql().mutation(mutation).execute().let { result ->
+                assertNull(result.exception)
+                assertNull(result.errors)
+                assertNotNull(result.data)
+            }
+            assertEquals("example.txt", data.upload?.name)
+            assertEquals("text/plain", data.upload?.type)
+            assertEquals("Hello World!", data.upload?.content)
         }
     }
 

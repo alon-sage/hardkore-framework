@@ -18,6 +18,14 @@ mutation EmitEvent($userId: ID, $message: String, $source: EventSource) {
     }
 }
 
+mutation Upload($file: File) {
+    upload(file: $file) {
+        name
+        type
+        content
+    }
+}
+
 subscription WatchEvents($userId: ID) {
     userEvents(userId: $userId) {
         id

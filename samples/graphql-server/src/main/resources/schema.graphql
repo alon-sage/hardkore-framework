@@ -1,9 +1,12 @@
+scalar File
+
 type Query {
     user(id: ID): User
 }
 
 type Mutation {
     emitEvent(userId: ID, message: String, source: EventSource): Event
+    upload(file: File): FileInfo
 }
 
 type Subscription {
@@ -19,6 +22,12 @@ type User {
 enum EventSource {
     SYSTEM,
     USER
+}
+
+type FileInfo {
+    name: String
+    type: String
+    content: String
 }
 
 type Event {

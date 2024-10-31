@@ -13,8 +13,8 @@ import kotlinx.serialization.json.intOrNull
 internal fun JsonElement.toKotlin(path: String, overrides: Map<String, Any?>): Any? =
     when (this) {
         is JsonPrimitive -> toKotlin(path, overrides)
-        is JsonArray -> toKotlin(path, overrides)
-        is JsonObject -> toKotlin(path, overrides)
+        is JsonArray -> if (path in overrides) overrides[path] else toKotlin(path, overrides)
+        is JsonObject -> if (path in overrides) overrides[path] else toKotlin(path, overrides)
     }
 
 internal fun JsonPrimitive.toKotlin(path: String, overrides: Map<String, Any?>): Any? =

@@ -6,13 +6,13 @@ import io.github.alonsage.hardkore.di.DiModule
 import io.github.alonsage.hardkore.di.DiProfiles
 import io.github.alonsage.hardkore.graphql.server.GraphQLServerDiProfile
 import io.github.alonsage.hardkore.graphql.server.dataclasses.Mutation
-import io.github.alonsage.hardkore.graphql.server.dataclasses.Opt
+import io.github.alonsage.hardkore.utils.Opt
 import io.github.alonsage.hardkore.graphql.server.dataclasses.Query
 import io.github.alonsage.hardkore.graphql.server.dataclasses.Subscription
 import io.github.alonsage.hardkore.graphql.server.dataclasses.bindGraphQLDataClass
 import io.github.alonsage.hardkore.graphql.server.dataclasses.bindGraphQLEnum
 import io.github.alonsage.hardkore.graphql.server.dataclasses.bindGraphQLResolver
-import io.github.alonsage.hardkore.graphql.server.dataclasses.isMissing
+import io.github.alonsage.hardkore.utils.isMissing
 import io.github.alonsage.hardkore.runtime.runApplication
 import io.ktor.http.content.PartData
 import kotlinx.coroutines.delay

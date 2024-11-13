@@ -1,4 +1,4 @@
-package io.github.alonsage.hardkore.graphql.server.dataclasses
+package io.github.alonsage.hardkore.utils
 
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract

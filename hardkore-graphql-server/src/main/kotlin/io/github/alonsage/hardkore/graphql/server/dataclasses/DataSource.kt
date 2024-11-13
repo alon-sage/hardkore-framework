@@ -55,26 +55,35 @@ internal sealed interface DataSource : DataFetcher<Any?> {
                     fieldDefinition.inputValueDefinitions.all { it.name in argumentParams }
 
         override fun get(environment: DataFetchingEnvironment): Any? {
-            val arguments = buildMap {
+            val fnArguments = buildMap {
                 put(extensionParam, environment.getSource() ?: dataClass.objectInstance)
                 put(instanceParam, resolver)
                 if (environmentParam != null) {
                     put(environmentParam, environment)
                 }
-                argumentParams.forEach { (name, param) ->
-                    put(param, convertValue(environment.getArgument(name), param.type))
+                val fieldArguments = environment.arguments
+                argumentParams.entries.associateTo(this) { (name, param) ->
+                    param to if (param.type.classifier == Opt::class) {
+                        if (name in fieldArguments) {
+                            Opt.Present(convertValue(fieldArguments[name], checkNotNull(param.type.arguments[0].type)))
+                        } else {
+                            Opt.Missing
+                        }
+                    } else {
+                        convertValue(fieldArguments[name], param.type)
+                    }
                 }
             }
             val result = if (function.isSuspend) {
                 environment.coroutineScope
-                    .future(start = CoroutineStart.UNDISPATCHED) { function.callSuspendBy(arguments) }
+                    .future(start = CoroutineStart.UNDISPATCHED) { function.callSuspendBy(fnArguments) }
                     .exceptionallyCompose {
                         val actualException = if (it is InvocationTargetException) it.targetException else it
                         CompletableFuture.failedFuture<Any?>(actualException)
                     }
             } else {
                 try {
-                    function.callBy(arguments)
+                    function.callBy(fnArguments)
                 } catch (e: Exception) {
                     val actualException = if (e is InvocationTargetException) e.targetException else e
                     CompletableFuture.failedFuture<Any?>(actualException)
@@ -124,7 +133,15 @@ internal sealed interface DataSource : DataFetcher<Any?> {
         private fun makeDataClass(value: Map<*, *>, dataClass: KClass<*>): Any {
             val constructor = checkNotNull(dataClass.primaryConstructor)
             val arguments = constructor.parameters.associateWith {
-                convertValue(value[it.name], it.type)
+                if (it.type.classifier == Opt::class) {
+                    if (it.name in value) {
+                        Opt.Present(convertValue(value[it.name], checkNotNull(it.type.arguments[0].type)))
+                    } else {
+                        Opt.Missing
+                    }
+                } else {
+                    convertValue(value[it.name], it.type)
+                }
             }
             return constructor.callBy(arguments)
         }

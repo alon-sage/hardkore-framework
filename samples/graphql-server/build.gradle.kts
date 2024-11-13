@@ -20,7 +20,7 @@ apollo {
         outputDirConnection {
             connectToKotlinSourceSet("test")
         }
-        generateOptionalOperationVariables = false
+        generateOptionalOperationVariables = true
         mapScalarToUpload("File")
     }
 }

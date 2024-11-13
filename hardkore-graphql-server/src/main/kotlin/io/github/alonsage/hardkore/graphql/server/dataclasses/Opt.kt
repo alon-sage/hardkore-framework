@@ -20,3 +20,26 @@ fun <T> Opt<T>.isMissing(): Boolean {
     contract { returns(false) implies (this@isMissing is Opt.Present<T>) }
     return this is Opt.Missing
 }
+
+inline fun <T> Opt<T>.onMissing(block: () -> Unit): Opt<T> =
+    also {
+        if (isMissing()) {
+            block()
+        }
+    }
+
+inline fun <T> Opt<T>.onPresent(block: (T) -> Unit): Opt<T> =
+    also {
+        if (!isMissing()) {
+            block(value)
+        }
+    }
+
+fun <T> Opt<T>.getOrNull(): T? =
+    if (isMissing()) null else value
+
+fun <T> Opt<T>.getOrDefault(default: T): T =
+    if (isMissing()) default else value
+
+inline fun <T> Opt<T>.getOrElse(block: () -> T): T =
+    if (isMissing()) block() else value

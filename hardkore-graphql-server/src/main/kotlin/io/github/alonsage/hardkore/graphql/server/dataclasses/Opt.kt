@@ -43,3 +43,6 @@ fun <T> Opt<T>.getOrDefault(default: T): T =
 
 inline fun <T> Opt<T>.getOrElse(block: () -> T): T =
     if (isMissing()) block() else value
+
+inline fun <T, R> Opt<T>.map(block: (T) -> R): Opt<R> =
+    if (isMissing()) Opt.Missing() else Opt.Present(block(value))

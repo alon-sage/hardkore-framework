@@ -47,6 +47,9 @@ inline fun <T> Opt<T>.getOrElse(block: () -> T): T =
 inline fun <T, R> Opt<T>.map(block: (T) -> R): Opt<R> =
     if (isMissing()) Opt.Missing() else Opt.Present(block(value))
 
+inline fun <T, R> Opt<T>.flatMap(block: (T) -> Opt<R>): Opt<R> =
+    if (isMissing()) Opt.Missing() else block(value)
+
 fun <T, R> Opt<T>.mapNotNull(block: (T) -> R): Opt<R & Any> =
     if (isMissing()) {
         Opt.Missing()

@@ -1,6 +1,7 @@
 package io.github.alonsage.hardkore.utils
 
 import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 sealed interface Opt<out T> {
@@ -45,11 +46,17 @@ fun <T> Opt<T>.isPresent(): Boolean {
     return this is Opt.Present<T>
 }
 
-inline fun <T> Opt<T>.onMissing(block: () -> Unit): Opt<T> =
-    also { if (isMissing()) block() }
+@OptIn(ExperimentalContracts::class)
+inline fun <T> Opt<T>.onMissing(block: () -> Unit): Opt<T> {
+    contract { callsInPlace(block, InvocationKind.AT_MOST_ONCE) }
+    return also { if (isMissing()) block() }
+}
 
-inline fun <T> Opt<T>.onPresent(block: (T) -> Unit): Opt<T> =
-    also { if (isPresent()) block(value) }
+@OptIn(ExperimentalContracts::class)
+inline fun <T> Opt<T>.onPresent(block: (T) -> Unit): Opt<T> {
+    contract { callsInPlace(block, InvocationKind.AT_MOST_ONCE) }
+    return also { if (isPresent()) block(value) }
+}
 
 fun <T> Opt<T>.getOrNull(): T? =
     if (isPresent()) value else null
@@ -57,20 +64,35 @@ fun <T> Opt<T>.getOrNull(): T? =
 fun <T> Opt<T>.getOrDefault(default: T): T =
     if (isPresent()) value else default
 
-inline fun <T> Opt<T>.getOrElse(block: () -> T): T =
-    if (isPresent()) value else block()
+@OptIn(ExperimentalContracts::class)
+inline fun <T> Opt<T>.getOrElse(block: () -> T): T {
+    contract { callsInPlace(block, InvocationKind.AT_MOST_ONCE) }
+    return if (isPresent()) value else block()
+}
 
-inline fun <T, R> Opt<T>.map(block: (T) -> R): Opt<R> =
-    if (isMissing()) Opt.missing() else Opt.of(block(value))
+@OptIn(ExperimentalContracts::class)
+inline fun <T, R> Opt<T>.map(block: (T) -> R): Opt<R> {
+    contract { callsInPlace(block, InvocationKind.AT_MOST_ONCE) }
+    return if (isMissing()) Opt.missing() else Opt.of(block(value))
+}
 
-inline fun <T, R> Opt<T>.flatMap(block: (T) -> Opt<R>): Opt<R> =
-    if (isMissing()) Opt.missing() else block(value)
+@OptIn(ExperimentalContracts::class)
+inline fun <T, R> Opt<T>.flatMap(block: (T) -> Opt<R>): Opt<R> {
+    contract { callsInPlace(block, InvocationKind.AT_MOST_ONCE) }
+    return if (isMissing()) Opt.missing() else block(value)
+}
 
-fun <T, R> Opt<T>.mapNotNull(block: (T) -> R): Opt<R & Any> =
-    if (isMissing()) Opt.missing() else Opt.ofNotNull(block(value))
+@OptIn(ExperimentalContracts::class)
+inline fun <T, R> Opt<T>.mapNotNull(block: (T) -> R): Opt<R & Any> {
+    contract { callsInPlace(block, InvocationKind.AT_MOST_ONCE) }
+    return if (isMissing()) Opt.missing() else Opt.ofNotNull(block(value))
+}
 
-fun <T> Opt<T>.filter(block: (T) -> Boolean): Opt<T> =
-    if (isMissing() || !block(value)) Opt.missing() else Opt.of(value)
+@OptIn(ExperimentalContracts::class)
+inline fun <T> Opt<T>.filter(block: (T) -> Boolean): Opt<T> {
+    contract { callsInPlace(block, InvocationKind.AT_MOST_ONCE) }
+    return if (isMissing() || !block(value)) Opt.missing() else Opt.of(value)
+}
 
 fun <T> Opt<T>.filterNotNull(): Opt<T & Any> =
     if (isMissing()) Opt.missing() else Opt.ofNotNull(value)
@@ -81,8 +103,11 @@ inline fun <reified T> Opt<Any?>.filterIsInstance(): Opt<T> =
 fun <T> Opt<T>.or(alt: Opt<T>): Opt<T> =
     if (isPresent()) this else alt
 
-inline fun <T> Opt<T>.orElse(block: () -> T): Opt<T> =
-    if (isPresent()) this else Opt.of(block())
+@OptIn(ExperimentalContracts::class)
+inline fun <T> Opt<T>.orElse(block: () -> T): Opt<T> {
+    contract { callsInPlace(block, InvocationKind.AT_MOST_ONCE) }
+    return if (isPresent()) this else Opt.of(block())
+}
 
 fun <T, R> Opt<T>.zip(other: Opt<R>): Opt<Pair<T, R>> =
     if (isPresent() && other.isPresent()) {

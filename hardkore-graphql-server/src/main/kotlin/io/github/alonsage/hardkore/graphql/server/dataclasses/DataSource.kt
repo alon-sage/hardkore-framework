@@ -66,7 +66,7 @@ internal sealed interface DataSource : DataFetcher<Any?> {
                 argumentParams.entries.associateTo(this) { (name, param) ->
                     param to if (param.type.classifier == Opt::class) {
                         if (name in fieldArguments) {
-                            Opt.Present(convertValue(fieldArguments[name], checkNotNull(param.type.arguments[0].type)))
+                            Opt.of(convertValue(fieldArguments[name], checkNotNull(param.type.arguments[0].type)))
                         } else {
                             Opt.Missing
                         }
@@ -136,7 +136,7 @@ internal sealed interface DataSource : DataFetcher<Any?> {
             val arguments = constructor.parameters.associateWith {
                 if (it.type.classifier == Opt::class) {
                     if (it.name in value) {
-                        Opt.Present(convertValue(value[it.name], checkNotNull(it.type.arguments[0].type)))
+                        Opt.of(convertValue(value[it.name], checkNotNull(it.type.arguments[0].type)))
                     } else {
                         Opt.Missing
                     }
